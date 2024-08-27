@@ -591,16 +591,17 @@ VNetBridgeReceiveFromVNet(VNetJack        *this, // IN: jack
 
    dev_lock_list();
    // added line
+   bool found = false
    for_each_netdev_rcu(&init_net, dev) {
       if (MAC_EQ(dest, dev->dev_addr) ||
           skb->len > dev->mtu + dev->hard_header_len) {
-         continue;
+        found = true;
+	break;
       }
       // Your existing code here (for sending down)
    }
    dev_unlock_list();
-   if (MAC_EQ(dest, dev->dev_addr) ||
-       skb->len > dev->mtu + dev->hard_header_len) {
+   if (found) {
       dev_unlock_list();
    } else {
 #     if 0 // XXX we should do header translation
